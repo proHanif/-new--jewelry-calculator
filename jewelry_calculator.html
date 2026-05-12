@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="description" content="Professional jewelry price calculator with real-time FT and 916 rate pricing">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Jewelry Calculator">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23d4a574' width='192' height='192'/><text x='50%' y='50%' font-size='100' font-weight='bold' fill='white' text-anchor='middle' dominant-baseline='central'>₹</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%23d4a574' width='180' height='180'/><text x='50%' y='50%' font-size='90' font-weight='bold' fill='white' text-anchor='middle' dominant-baseline='central'>₹</text></svg>">
+    <title>Jewelry Price Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 36px;
+            font-weight: 600;
+            color: #0a0a0a;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #555;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .input-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+        }
+
+        .input-group:focus-within {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            border-color: #d4a574;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 16px;
+            color: #222;
+            background: #fafafa;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            background: white;
+            border-color: #d4a574;
+            box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.1);
+        }
+
+        .input-group input::placeholder {
+            color: #bbb;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border: 1px solid #f0f0f0;
+        }
+
+        .card-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #333;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 4px;
+            background: #d4a574;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .stat-group {
+            margin-bottom: 25px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 500;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 600;
+            color: #0a0a0a;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .stat-value.secondary {
+            font-size: 16px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            color: #333;
+            font-weight: 400;
+        }
+
+        .divider {
+            height: 1px;
+            background: #f0f0f0;
+            margin: 20px 0;
+        }
+
+        .price-box {
+            background: linear-gradient(135deg, #faf8f3 0%, #f5f1e8 100%);
+            border: 1px solid #e8dcc8;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .price-label {
+            font-size: 11px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .price-value {
+            font-size: 42px;
+            font-weight: 700;
+            color: #d4a574;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .customer-prices {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 450px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        .customer-prices::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .customer-prices::-webkit-scrollbar-track {
+            background: #f5f5f5;
+            border-radius: 3px;
+        }
+
+        .customer-prices::-webkit-scrollbar-thumb {
+            background: #ddd;
+            border-radius: 3px;
+        }
+
+        .customer-prices::-webkit-scrollbar-thumb:hover {
+            background: #ccc;
+        }
+
+        .price-btn {
+            background: white;
+            border: 1px solid #e8e8e8;
+            border-radius: 6px;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .price-btn:hover {
+            background: #faf8f3;
+            border-color: #d4a574;
+            box-shadow: 0 2px 8px rgba(212, 165, 116, 0.12);
+            transform: translateY(-1px);
+        }
+
+        .price-btn:active {
+            transform: translateY(0);
+        }
+
+        .price-percent {
+            color: #888;
+        }
+
+        .price-amount {
+            color: #d4a574;
+            font-weight: 600;
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+
+        .bill-section {
+            display: none;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border: 1px solid #f0f0f0;
+            padding: 30px;
+            margin-top: 30px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .bill-section.visible {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .bill-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .bill-table tr {
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .bill-table td {
+            padding: 14px 0;
+            font-size: 14px;
+        }
+
+        .bill-table td:first-child {
+            color: #888;
+        }
+
+        .bill-table td:last-child {
+            text-align: right;
+            color: #333;
+            font-weight: 500;
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+
+        .bill-table tr.total td {
+            color: #1a1a1a;
+            font-weight: 700;
+            font-size: 16px;
+            padding: 16px 0;
+            border-bottom: none;
+        }
+
+        .bill-table tr.total td:last-child {
+            color: #d4a574;
+        }
+
+        .empty-message {
+            color: #aaa;
+            font-size: 13px;
+            text-align: center;
+            padding: 30px;
+        }
+
+        @media (max-width: 1000px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .price-value {
+                font-size: 36px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .input-section {
+                grid-template-columns: 1fr;
+            }
+
+            body {
+                padding: 20px 15px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .stat-value {
+                font-size: 24px;
+            }
+
+            .price-value {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Jewelry Price Calculator</h1>
+            <p class="subtitle">Real-time pricing and billing</p>
+        </header>
+
+        <div class="input-section">
+            <div class="input-group">
+                <label>FT Rate (Today)</label>
+                <input type="number" id="ftRate" value="15000" placeholder="15000">
+            </div>
+            <div class="input-group">
+                <label>916 Rate</label>
+                <input type="number" id="rate916" value="5000" placeholder="5000">
+            </div>
+            <div class="input-group">
+                <label>Gram Weight</label>
+                <input type="number" id="gramWeight" value="8" step="0.1" placeholder="0">
+            </div>
+            <div class="input-group">
+                <label>Item Name</label>
+                <select id="itemSelect">
+                    <option value="">-- Select Item --</option>
+                    <option value="Chain Leaf">Chain Leaf</option>
+                    <option value="Chain Rajkot">Chain Rajkot</option>
+                    <option value="TT Drops">TT Drops</option>
+                    <option value="Ring">Ring</option>
+                    <option value="Urupadi">Urupadi</option>
+                    <option value="Necklace">Necklace</option>
+                    <option value="Dollar">Dollar</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <!-- FT RATE CALCULATION -->
+            <div class="card">
+                <div class="card-title">FT Rate Calculation</div>
+                
+                <div class="stat-group">
+                    <div class="stat-label">Touch Factor</div>
+                    <div class="stat-value" id="touchDisplay">--</div>
+                </div>
+
+                <div class="price-box">
+                    <div class="price-label">Total Price</div>
+                    <div class="price-value" id="totalPrice">₹ 0</div>
+                </div>
+            </div>
+
+            <!-- CUSTOMER PRICING -->
+            <div class="card">
+                <div class="card-title">Customer Pricing (916)</div>
+                
+                <div class="customer-prices" id="customerPricesContainer">
+                    <div class="empty-message">Enter all values to see pricing options</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BILL SECTION -->
+        <div class="bill-section" id="billSection">
+            <div class="card-title">Bill Details</div>
+            
+            <table class="bill-table">
+                <tr>
+                    <td>Product Item Weight</td>
+                    <td id="billItemWeight">-- g</td>
+                </tr>
+                <tr>
+                    <td>+ Wastage <span id="billWastagePercent" style="font-family: monospace; font-weight: 600;">--</span></td>
+                    <td id="billWastageAmount">-- g</td>
+                </tr>
+                <tr>
+                    <td><strong>Total Weight</strong></td>
+                    <td><strong id="billTotalWeight">-- g</strong></td>
+                </tr>
+                <tr>
+                    <td>Price Before GST</td>
+                    <td id="billPriceBeforeGST">₹ --</td>
+                </tr>
+                <tr>
+                    <td>+ GST (3%)</td>
+                    <td id="billGSTAmount">₹ --</td>
+                </tr>
+                <tr class="total">
+                    <td>Total Bill</td>
+                    <td id="billTotal">₹ --</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const itemTouchFactors = {
+            "Chain Leaf": 0.95,
+            "Chain Rajkot": 0.96,
+            "TT Drops": 0.98,
+            "Ring": 0.98,
+            "Urupadi": 0.825,
+            "Necklace": 0.97,
+            "Dollar": 0.98
+        };
+
+        const percentages = [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17];
+
+        const ftRateInput = document.getElementById("ftRate");
+        const rate916Input = document.getElementById("rate916");
+        const gramWeightInput = document.getElementById("gramWeight");
+        const itemSelect = document.getElementById("itemSelect");
+        const touchDisplay = document.getElementById("touchDisplay");
+        const totalPriceDisplay = document.getElementById("totalPrice");
+        const customerPricesContainer = document.getElementById("customerPricesContainer");
+        const billSection = document.getElementById("billSection");
+
+        function showBill(percentage) {
+            const gramWeight = parseFloat(gramWeightInput.value) || 0;
+            const rate916 = parseFloat(rate916Input.value) || 0;
+
+            if (gramWeight === 0 || rate916 === 0) return;
+
+            const wastageAmount = gramWeight * (percentage / 100);
+            const totalWeight = gramWeight + wastageAmount;
+            const priceBeforeGST = totalWeight * rate916;
+            const gstAmount = priceBeforeGST * 0.03;
+            const totalBill = priceBeforeGST + gstAmount;
+
+            document.getElementById("billItemWeight").textContent = gramWeight.toFixed(2) + " g";
+            document.getElementById("billWastagePercent").textContent = "(" + percentage + "%)";
+            document.getElementById("billWastageAmount").textContent = wastageAmount.toFixed(2) + " g";
+            document.getElementById("billTotalWeight").textContent = totalWeight.toFixed(2) + " g";
+            document.getElementById("billPriceBeforeGST").textContent = "₹ " + Math.round(priceBeforeGST).toLocaleString('en-IN');
+            document.getElementById("billGSTAmount").textContent = "₹ " + Math.round(gstAmount).toLocaleString('en-IN');
+            document.getElementById("billTotal").textContent = "₹ " + Math.round(totalBill).toLocaleString('en-IN');
+
+            billSection.classList.add("visible");
+            setTimeout(() => {
+                billSection.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            }, 100);
+        }
+
+        function calculateCustomerPrices() {
+            const gramWeight = parseFloat(gramWeightInput.value) || 0;
+            const rate916 = parseFloat(rate916Input.value) || 0;
+
+            customerPricesContainer.innerHTML = "";
+
+            if (gramWeight === 0 || rate916 === 0) {
+                customerPricesContainer.innerHTML = '<div class="empty-message">Enter gram weight and 916 rate</div>';
+                return;
+            }
+
+            percentages.forEach(percentage => {
+                const customerPrice = gramWeight * (1 + percentage / 100) * rate916;
+                const priceRounded = Math.round(customerPrice);
+
+                const priceBtn = document.createElement("button");
+                priceBtn.className = "price-btn";
+                priceBtn.innerHTML = `
+                    <span class="price-percent">+${percentage}%</span>
+                    <span class="price-amount">₹ ${priceRounded.toLocaleString('en-IN')}</span>
+                `;
+
+                priceBtn.addEventListener("click", () => showBill(percentage));
+                customerPricesContainer.appendChild(priceBtn);
+            });
+        }
+
+        function calculate() {
+            const ftRate = parseFloat(ftRateInput.value) || 0;
+            const gramWeight = parseFloat(gramWeightInput.value) || 0;
+            const selectedItem = itemSelect.value;
+
+            if (!selectedItem || gramWeight === 0 || ftRate === 0) {
+                touchDisplay.textContent = "--";
+                totalPriceDisplay.textContent = "₹ 0";
+            } else {
+                const touchFactor = itemTouchFactors[selectedItem];
+                const totalPrice = gramWeight * touchFactor * ftRate;
+
+                touchDisplay.textContent = touchFactor.toFixed(3);
+                totalPriceDisplay.textContent = "₹ " + Math.round(totalPrice).toLocaleString('en-IN');
+            }
+
+            calculateCustomerPrices();
+        }
+
+        ftRateInput.addEventListener("change", calculate);
+        ftRateInput.addEventListener("input", calculate);
+        rate916Input.addEventListener("change", calculate);
+        rate916Input.addEventListener("input", calculate);
+        gramWeightInput.addEventListener("change", calculate);
+        gramWeightInput.addEventListener("input", calculate);
+        itemSelect.addEventListener("change", calculate);
+
+        calculate();
+
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(() => {
+                // Service worker not available - app will still work online
+            });
+        }
+    </script>
+</body>
+</html>
